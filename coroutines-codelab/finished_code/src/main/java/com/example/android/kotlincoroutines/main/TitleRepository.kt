@@ -61,25 +61,6 @@ class TitleRepository(val network: MainNetwork, val titleDao: TitleDao) {
             throw TitleRefreshError("Unable to refresh title", error)
         }
     }
-
-    /**
-     * This API is exposed for callers from the Java Programming language.
-     *
-     * The request will run unstructured, which means it won't be able to be cancelled.
-     *
-     * @param titleRefreshCallback a callback
-     */
-    fun refreshTitleInterop(titleRefreshCallback: TitleRefreshCallback) {
-        val scope = CoroutineScope(Dispatchers.Default)
-        scope.launch {
-            try {
-                refreshTitle()
-                titleRefreshCallback.onCompleted()
-            } catch (throwable: Throwable) {
-                titleRefreshCallback.onError(throwable)
-            }
-        }
-    }
 }
 
 /**
@@ -89,8 +70,3 @@ class TitleRepository(val network: MainNetwork, val titleDao: TitleDao) {
  * @property cause the original cause of this exception
  */
 class TitleRefreshError(message: String, cause: Throwable) : Throwable(message, cause)
-
-interface TitleRefreshCallback {
-    fun onCompleted()
-    fun onError(cause: Throwable)
-}
